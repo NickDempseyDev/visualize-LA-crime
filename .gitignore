@@ -33,7 +33,7 @@ yarn-error.log*
 
 # typescript
 *.debug
-*.csv
+
 package-lock.json
 *.db
 node_modules
