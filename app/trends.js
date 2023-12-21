@@ -1,0 +1,7 @@
+export const trendEnum = {
+	CRIME_BY_DAYHOUR: `SELECT strftime('%w', DATEOCC) AS DayOfWeek, strftime('%H', TIMEOCC) AS HourOfDay, COUNT(*) AS CrimeCount FROM crimes WHERE DATEOCC BETWEEN ? AND ? GROUP BY DayOfWeek, HourOfDay ORDER BY DayOfWeek, HourOfDay`,
+	VICTIM_BY_AGE: `SELECT VictAge, strftime('%H', TIMEOCC) AS HourOfDay, COUNT(*) AS CrimeCount FROM crimes WHERE DATEOCC BETWEEN ? AND ? AND VictAge IS NOT NULL AND TIMEOCC IS NOT NULL GROUP BY VictAge, HourOfDay ORDER BY VictAge, HourOfDay`,
+	BAD_LOCATIONS: `SELECT LAT, LON, COUNT(*) AS CrimeCount FROM crimes WHERE DATEOCC BETWEEN ? AND ? AND LAT IS NOT NULL AND LON IS NOT NULL GROUP BY LAT, LON ORDER BY CrimeCount DESC`,
+	CRIME_BY_AGE_LOCATION: `SELECT LAT, LON, COUNT(*) AS CrimeCount, CrmCdDesc, AVG(VictAge) AS AvgVictimAge FROM crimes WHERE DATEOCC BETWEEN ? AND ? AND LAT IS NOT NULL AND LON IS NOT NULL AND VictAge IS NOT NULL GROUP BY LAT, LON, CrmCdDesc ORDER BY CrimeCount DESC`,
+	PREMISE_WEAPON: `WITH RankedCrimes AS ( SELECT DayOfWeek, WeaponDesc, CrimeCount, ROW_NUMBER() OVER (PARTITION BY DayOfWeek ORDER BY CrimeCount DESC) AS RowNum FROM ( SELECT strftime('%w', DATEOCC) AS DayOfWeek, WeaponDesc, COUNT(*) AS CrimeCount FROM crimes WHERE DATEOCC BETWEEN ? AND ? AND WeaponDesc IS NOT 'No weapons identified' AND WeaponDesc IS NOT 'VERBAL THREAT' AND DATEOCC IS NOT NULL AND WeaponDesc IS NOT NULL GROUP BY DayOfWeek, WeaponDesc ) Subquery )    SELECT DayOfWeek, WeaponDesc, CrimeCount FROM RankedCrimes WHERE RowNum <= 8`,
+};
